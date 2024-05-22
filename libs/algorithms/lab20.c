@@ -233,6 +233,103 @@ void tusk3_test3(){
     ASSERT_STRING_INT_ARR(expected, 9, res_arr, size)
 }
 
+
+//tusk 4................................................................................................................
+typedef struct domain_string_value{
+    char name[1000];
+    int data;
+}domain_string_value;
+typedef struct array_domain_count{
+    int size;
+    domain_string_value array[1000];
+}array_domain_count;
+void add_in_array_domain_count(array_domain_count *bag, domain_string_value domain){
+    bool flag_new = true;
+    if(bag->size!=0) {
+        for (int i = 0; i < bag->size; i++) {
+            if (strcmp_(bag->array[i].name, domain.name)) {
+                bag->array[i].data += domain.data;
+                flag_new = false;
+            }
+        }
+    }
+    if(flag_new){
+        char *begin = domain.name;
+        *copy(begin, begin + strlen_(begin), bag->array[bag->size].name) = '\0';
+        bag->array[bag->size].data=domain.data;
+        bag->size++;
+    }
+}
+void count_search(char *string, char *res, int *size){
+    char *begin = string;
+    while (*begin != '\0'){
+        if(*begin >= '0' && *begin <='9'){
+            res[*size] = *begin;
+            (*size)++;
+            begin++;
+        } else{
+            res[*size] = '\0';
+            *size += 1;
+            return;
+        }
+    }
+}
+//main
+
+void count_domain(char (*arr)[100], int size, array_domain_count *bag_domain){
+    bag_domain->size=0;
+    for(int i = 0; i < size; i++){
+        char count_str[100];
+        char *begin = arr[i];
+        int shift = 0;
+        count_search(begin, count_str,&shift);
+        int count = atoi(count_str);
+        begin += shift;
+        while(point_in_string(begin-1)){
+            domain_string_value data_domain;
+            data_domain.data = count;
+            char *copy_in = data_domain.name;
+            *copy(begin, begin+ strlen_(begin),copy_in) = '\0';
+            add_in_array_domain_count(bag_domain, data_domain);
+            begin = find_symbl(begin,'.');
+            begin++;
+        }
+    }
+}
+void tusk4_test1(){
+    array_domain_count bag;
+    char arr[][100] = {"9001 discuss.codeforces.com"};
+    count_domain(arr, 1, &bag);
+    int array_count_got[1000];
+    char array_name_got[1000][1000];
+    int size_array = 0;
+    for(int i = 0; i < bag.size; i++){
+        char *begin = bag.array[i].name;
+        copy(begin, begin+ strlen_(begin), array_name_got[size_array]);
+        array_count_got[size_array] = bag.array[size_array].data;
+        size_array++;
+    }
+    int int_arr_expected[] = {9001,9001,9001};
+    char char_arr_expected[][1000] = {"discuss.codeforces.com", "codeforces.com", "com"};
+    ASSERT_STRING_INT_ARR_CHAR_ARRAY(int_arr_expected, 3, array_count_got, size_array, 3, char_arr_expected, size_array, array_name_got)
+}
+void tusk4_test2(){
+    array_domain_count bag;
+    char arr[][100] = {"900 google.mail.com", "50 yahoo.com", "1 intel.mail.com", "5 wiki.org"};
+    count_domain(arr, 4, &bag);
+    int array_count_got[1000];
+    char array_name_got[1000][1000];
+    int size_array = 0;
+    for(int i = 0; i < bag.size; i++){
+        char *begin = bag.array[i].name;
+        copy(begin, begin+ strlen_(begin), array_name_got[size_array]);
+        array_count_got[size_array] = bag.array[size_array].data;
+        size_array++;
+    }
+    int int_arr_expected[] = {900,901,951,50,1,5,5};
+    char char_arr_expected[][1000] = {"google.mail.com", "mail.com", "com", "yahoo.com", "intel.mail.com", "wiki.org", "org"};
+    ASSERT_STRING_INT_ARR_CHAR_ARRAY(int_arr_expected, 7, array_count_got, size_array, 7, char_arr_expected, size_array, array_name_got)
+}
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
@@ -243,4 +340,6 @@ void testLab20(){
     tusk3_test1();
     tusk3_test2();
     tusk3_test3();
+    tusk4_test1();
+    tusk4_test2();
 }

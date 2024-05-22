@@ -330,6 +330,52 @@ void tusk4_test2(){
     char char_arr_expected[][1000] = {"google.mail.com", "mail.com", "com", "yahoo.com", "intel.mail.com", "wiki.org", "org"};
     ASSERT_STRING_INT_ARR_CHAR_ARRAY(int_arr_expected, 7, array_count_got, size_array, 7, char_arr_expected, size_array, array_name_got)
 }
+
+int countSubmatrices(matrix m) {
+    int count = 0;
+    int nums[m.nCols];
+    for(int i = 0; i < m.nCols; i++){
+        nums[i] = 0;
+    }
+    for (int i = 0; i < m.nRows; i++) {
+        for (int j = 0; j < m.nCols; j++) {
+            if (m.values[i][j] == 0) {
+                nums[j] = 0;
+            } else {
+                nums[j] = nums[j]+1;
+            }
+        }
+        for (int j = 0; j < m.nCols; j++) {
+            int minVal = nums[j];
+            for (int k = j; k < m.nCols; k++) {
+                minVal = minVal < nums[k] ? minVal : nums[k];
+                count += minVal;
+            }
+        }
+    }
+    return count;
+}
+void tusk5_test1(){
+    int arr[] = {1,0,1,1,1,0,1,1,0};
+    matrix m = createMatrixFromArray(arr,3,3);
+    int res = countSubmatrices(m);
+    int expected = 13;
+    ASSERT_INT(expected, res)
+}
+void tusk5_test2(){
+    int arr[] = {1,0,0,1,0,1,0,0,1};
+    matrix m = createMatrixFromArray(arr,3,3);
+    int res = countSubmatrices(m);
+    int expected = 6;
+    ASSERT_INT(expected, res)
+}
+void tusk5_test3(){
+    int arr[] = {1,0,0,0,0,0,0,0,1};
+    matrix m = createMatrixFromArray(arr,3,3);
+    int res = countSubmatrices(m);
+    int expected = 2;
+    ASSERT_INT(expected, res)
+}
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
@@ -342,4 +388,7 @@ void testLab20(){
     tusk3_test3();
     tusk4_test1();
     tusk4_test2();
+    tusk5_test1();
+    tusk5_test2();
+    tusk5_test3();
 }

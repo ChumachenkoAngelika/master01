@@ -83,12 +83,91 @@ void tusk1_test3(){
     ASSERT_STRING_INT_ARR(expected,9,arr_res,size)
     freeMemMatrix(&m);
 }
+//tusk 2................................................................................................................
+void game_life(matrix *m){
+    matrix temp_matrix = getMemMatrix(m->nRows,m->nCols);
+    for(int i = 0; i < m->nRows; i++){
+        for(int j = 0; j < m->nCols; j++){
+            temp_matrix.values[i][j] = 0;
+            int count_numb_one = 0;
+            for(int indx_y = i - 1; indx_y <= i + 1; indx_y++){
+                for(int indx_x = j - 1; indx_x <= j + 1; indx_x++){
+                    if(indx_y >= 0 && indx_y < m->nRows && indx_x >= 0 && indx_x < m->nCols){
+                        count_numb_one+=m->values[indx_y][indx_x];
+                    }
+                }
+            }
+            if(m->values[i][j] == 1 && (count_numb_one == 3 || count_numb_one == 4)){
+                temp_matrix.values[i][j] = 1;
+            }
+            if(m->values[i][j] == 0 && count_numb_one == 3){
+                temp_matrix.values[i][j] = 1;
+            }
+        }
+    }
+    for(int i = 0; i < m->nRows; i++){
+        for(int j = 0; j < m->nCols; j++){
+            m->values[i][j] = temp_matrix.values[i][j];
+        }
+    }
+    freeMemMatrix(&temp_matrix);
+}
+void tusk2_test1(){
+    int arr[] = {0,1,0,1,1,0,1,0,0};
+    matrix m = createMatrixFromArray(arr, 3,3);
+    game_life(&m);
+    int res[m.nCols*m.nRows];
+    int size = 0;
+    for(int i = 0; i < m.nRows; i++){
+        for(int j = 0; j < m.nCols; j++){
+            res[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {1,1,0,1,1,0,1,1,0};
+    ASSERT_STRING_INT_ARR(expected,9,res,size)
+    freeMemMatrix(&m);
+}
+void tusk2_test2(){
+    int arr[] = {0,1,0,0,0,1,1,1,1,0,0,0};
+    matrix m = createMatrixFromArray(arr, 4,3);
+    game_life(&m);
+    int res[m.nCols*m.nRows];
+    int size = 0;
+    for(int i = 0; i < m.nRows; i++){
+        for(int j = 0; j < m.nCols; j++){
+            res[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {0,0,0,1,0,1,0,1,1,0,1,0};
+    ASSERT_STRING_INT_ARR(expected,12,res,size)
+    freeMemMatrix(&m);
+}
+void tusk2_test3(){
+    int arr[] = {1,1,};
+    matrix m = createMatrixFromArray(arr, 2,1);
+    game_life(&m);
+    int res[m.nCols*m.nRows];
+    int size = 0;
+    for(int i = 0; i < m.nRows; i++){
+        for(int j = 0; j < m.nCols; j++){
+            res[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {0,0};
+    ASSERT_STRING_INT_ARR(expected,2,res,size)
+    freeMemMatrix(&m);
+}
 
 
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
     tusk1_test3();
-
+    tusk2_test1();
+    tusk2_test2();
+    tusk2_test3();
 
 }

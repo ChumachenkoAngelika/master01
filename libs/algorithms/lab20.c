@@ -161,6 +161,77 @@ void tusk2_test3(){
     freeMemMatrix(&m);
 }
 
+void median_filter(matrix *m, int filter) {
+    int temp[filter * filter];
+    int half = filter / 2;
+
+    for (int i = half; i < m->nRows - half; i++) {
+        for (int j = half; j < m->nCols - half; j++) {
+            int k = 0;
+            for (int x = i - half; x <= i + half; x++) {
+                for (int y = j - half; y <= j + half; y++) {
+                    temp[k++] = m->values[x][y];
+                }
+            }
+            for (int p = 0; p < filter * filter - 1; p++) {
+                for (int q = 0; q < filter * filter - p - 1; q++) {
+                    if (temp[q] > temp[q+1]) {
+                        int a = temp[q];
+                        temp[q] = temp[q+1];
+                        temp[q+1] = a;
+                    }
+                }
+            }
+            m->values[i][j] = temp[filter * filter / 2];
+        }
+    }
+}
+
+void tusk3_test1(){
+    int arr[] = {10,20,30,25,35,45,15,25,35};
+    matrix m = createMatrixFromArray(arr, 3,3);
+    median_filter(&m ,3);
+    int res_arr[9];
+    int size = 0;
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            res_arr[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {10,20,30,25,25,45,15,25,35};
+    ASSERT_STRING_INT_ARR(expected, 9, res_arr, size)
+}
+void tusk3_test2(){
+    int arr[] = {10,20,30,25,35,45,15,25,35, 20,20,20,20,35,40,5,10,15,35,25,20,30,50,25,10};
+    matrix m = createMatrixFromArray(arr, 5,5);
+    median_filter(&m ,5);
+    int res_arr[25];
+    int size = 0;
+    for(int i = 0; i < 5; i++){
+        for(int j = 0; j < 5; j++){
+            res_arr[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {10, 20, 30, 25, 35, 45, 15, 25, 35, 20, 20, 20, 25, 35, 40, 5, 10, 15, 35, 25, 20, 30, 50, 25, 10};
+    ASSERT_STRING_INT_ARR(expected, 25, res_arr, size)
+}
+void tusk3_test3(){
+    int arr[] = {10,20,30,25,25,45,15,25,35};
+    matrix m = createMatrixFromArray(arr, 3,3);
+    median_filter(&m ,3);
+    int res_arr[9];
+    int size = 0;
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            res_arr[size] = m.values[i][j];
+            size++;
+        }
+    }
+    int expected[] = {10,20,30,25,25,45,15,25,35};
+    ASSERT_STRING_INT_ARR(expected, 9, res_arr, size)
+}
 
 void testLab20(){
     tusk1_test1();
@@ -169,5 +240,7 @@ void testLab20(){
     tusk2_test1();
     tusk2_test2();
     tusk2_test3();
-
+    tusk3_test1();
+    tusk3_test2();
+    tusk3_test3();
 }

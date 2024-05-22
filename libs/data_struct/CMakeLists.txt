@@ -1,0 +1,14 @@
+add_library(data_struct
+        bitset/bitset.c
+        bitset/bitset.h
+        unordered_array/unordered_array_set.c
+        unordered_array/unordered_array_set.h
+        ordered_array/ordered_array_set.c
+        ordered_array/ordered_array_set.h
+        vector/vector.h
+        vector/vector.c
+        vector_void/vectorVoid.c
+        vector_void/vectorVoid.h
+        matrix/matrix.h
+        matrix/matrix.c
+)

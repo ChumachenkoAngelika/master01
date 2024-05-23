@@ -595,6 +595,40 @@ void tusk7_test3(){
     int expected[] = {3,2,0,1};
     ASSERT_STRING_INT_ARR(expected, 4, arr_res, arr_size)
 }
+
+
+void change_letters(int *arr, char *s){
+    int size_s = strlen_(s);
+    char temp_string[size_s+1];
+    for(int i = 0; i < size_s; i++){
+        *(temp_string+arr[i]) = *(s+i);
+    }
+    for (int i = 0; i < size_s; i++) {
+        *(s+i )= *(temp_string+i);
+    }
+}
+
+void tusk8_test1(){
+    int arr[] = {0,1,2};
+    char s[] = "abc";
+    change_letters(arr,s);
+    char expected[] = "abc";
+    ASSERT_STRING(expected, s)
+}
+void tusk8_test2(){
+    int arr[] = {0,3,2,1};
+    char s[] = "abap";
+    change_letters(arr,s);
+    char expected[] = "apab";
+    ASSERT_STRING(expected, s)
+}
+void tusk8_test3(){
+    int arr[] = {5,4,3,2,1,0};
+    char s[] = "zxcvbn";
+    change_letters(arr,s);
+    char expected[] = "nbvcxz";
+    ASSERT_STRING(expected, s)
+}
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
@@ -616,4 +650,7 @@ void testLab20(){
     tusk7_test1();
     tusk7_test2();
     tusk7_test3();
+    tusk8_test1();
+    tusk8_test2();
+    tusk8_test3();
 }

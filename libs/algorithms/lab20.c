@@ -466,6 +466,135 @@ void tusk6_test3(){
     int expected[] = {4,3,2,1,5};
     ASSERT_STRING_INT_ARR(expected, 5, got_arr,size)
 }
+
+
+typedef struct list{
+    int data;
+    struct list *left;
+    struct list *right;
+    int neighbour;
+}list;
+list *creat_list(int data){
+    list *node = malloc(sizeof(list));
+    node->data = data;
+    node->neighbour=0;
+    return node;
+}
+list *push_list(int data, int flag, list *node){
+    node->data = data;
+    list *temp = creat_list(0);
+    if(flag == 0){
+        node->left = temp;
+        if(node->neighbour == 0){
+            node->neighbour = 1;
+        } else{
+            node->neighbour = 3;
+        }
+    } else{
+        node->right = temp;
+        if(node->neighbour == 0){
+            node->neighbour = 2;
+        } else{
+            node->neighbour = 3;
+        }
+    }
+    return temp;
+}
+int find_indx_maxValue_border(int *arr, int border_left, int border_right){
+    int max_value = INT_MIN;
+    int indx;
+    for(int i = border_left; i < border_right; i++){
+        if(max_value < arr[i]){
+            max_value = arr[i];
+            indx = i;
+        }
+    }
+    return indx;
+}
+void trees(int *arr, int border_left, int border_right, list *tree, int max_size_arr){
+    if(border_right == border_left) {
+        return;
+    }
+    int max_index = find_indx_maxValue_border(arr, border_left,border_right);
+    if(max_index != border_left) {
+        trees(arr, border_left, max_index, push_list(arr[max_index], 0, tree),max_size_arr);
+        if(border_right - border_left == 1)
+            tree->neighbour=0;
+    }
+    if(max_index != border_right && max_index+1 != max_size_arr ||  border_right-border_left==1) {
+        trees(arr, max_index + 1, border_right, push_list(arr[max_index], 1, tree),max_size_arr);
+        if(border_right - border_left == 1)
+            tree->neighbour=0;
+    }
+}
+void BFS_list(list *tree[1000], int size, int *arr_res, int  *res_size){
+    int temp_size = 0;
+    list *tempArr[1000];
+    for(int i = 0; i < size; i++){
+        arr_res[*res_size] = tree[i]->data;
+        (*res_size)++;
+        if(tree[i]->neighbour == 1){
+            tempArr[temp_size] = tree[i]->left;
+            temp_size++;
+        }
+        if(tree[i]->neighbour == 2){
+            tempArr[temp_size] = tree[i]->right;
+            temp_size++;
+        }
+        if(tree[i]->neighbour == 3){
+            tempArr[temp_size] = tree[i]->left;
+            temp_size++;
+            tempArr[temp_size] = tree[i]->right;
+            temp_size++;
+        }
+        tree[i]->neighbour=0;
+        if(size>1)
+            free(tree[i]);
+        if(size == 1)
+            tree[0]->neighbour=0;
+
+    }
+    if(temp_size == 0)
+        return;
+    BFS_list(tempArr, temp_size, arr_res, res_size);
+
+}
+void tusk7_test1(){
+    int arr[] = {3,2,1,6,0,5};
+    list *main_list = creat_list(0);
+    trees(arr, 0, 6,main_list, 6);
+    list *arrRes[1000] = {main_list};
+    int arr_res[1000];
+    int arr_size =0;
+    BFS_list(arrRes, 1, arr_res, &arr_size);
+    free(main_list);
+    int expected[] = {6,3,5,2,0,1};
+    ASSERT_STRING_INT_ARR(expected, 6, arr_res, arr_size)
+}
+void tusk7_test2(){
+    int arr[] = {3,2,1};
+    list *main_list = creat_list(0);
+    trees(arr, 0, 3,main_list, 3);
+    list *arrRes[1000] = {main_list};
+    int arr_res[1000];
+    int arr_size =0;
+    BFS_list(arrRes, 1, arr_res, &arr_size);
+    free(main_list);
+    int expected[] = {3,2,1};
+    ASSERT_STRING_INT_ARR(expected, 3, arr_res, arr_size)
+}
+void tusk7_test3(){
+    int arr[] = {3,0,2,1};
+    list *main_list = creat_list(0);
+    trees(arr, 0, 4,main_list, 4);
+    list *arrRes[1000] = {main_list};
+    int arr_res[1000];
+    int arr_size =0;
+    BFS_list(arrRes, 1, arr_res, &arr_size);
+    free(main_list);
+    int expected[] = {3,2,0,1};
+    ASSERT_STRING_INT_ARR(expected, 4, arr_res, arr_size)
+}
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
@@ -484,4 +613,7 @@ void testLab20(){
     tusk6_test1();
     tusk6_test2();
     tusk6_test3();
+    tusk7_test1();
+    tusk7_test2();
+    tusk7_test3();
 }

@@ -629,6 +629,54 @@ void tusk8_test3(){
     char expected[] = "nbvcxz";
     ASSERT_STRING(expected, s)
 }
+
+
+void make_file(FILE *f, int N){
+    FILE *res = fopen("res.txt", "w");
+    while (feof(f) == 0){
+        int value;
+        if(fscanf(f,"%d",&value) != 0){
+            if(value < N)
+                fprintf(res, "%d ", value);
+        }
+    }
+    fclose(res);
+}
+
+char *find_suffix(char *s){
+    char *dot = find_symbl(s, '.');
+    if(*dot == '\0')
+        return NULL;
+    return dot;
+}
+
+void tusk9_test1(){
+    int N;
+    char name[64];
+    scanf("%s", name);
+    char *suffix = find_suffix(name);
+    if(find_suffix(name) == NULL || !strcmp_(suffix, ".txt")){
+        fprintf(stderr, "add to file suffix: .txt");
+        exit(1);
+    }
+
+    if(scanf("%d", &N) == 1){
+        FILE *f = fopen(name, "w+");
+        if(f==NULL){
+            fprintf(stderr, "Fail");
+            exit(1);
+        }
+        for(int i = 0; i < 25; i++){
+            fprintf(f, "%d ", i);
+        }
+        fseek(f, 0L, 0);
+        make_file(f, N);
+        fclose(f);
+        remove(name);
+    } else{
+        fprintf(stderr, "not a number entered");
+    }
+}
 void testLab20(){
     tusk1_test1();
     tusk1_test2();
@@ -653,4 +701,5 @@ void testLab20(){
     tusk8_test1();
     tusk8_test2();
     tusk8_test3();
+    tusk9_test1();
 }
